@@ -62,4 +62,12 @@
         tools:layout_editor_absoluteX="47dp"
         tools:layout_editor_absoluteY="156dp" />
 
+    <ImageView
+        android:id="@+id/imageView100"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/btn_star_big_on"
+        tools:layout_editor_absoluteX="47dp"
+        tools:layout_editor_absoluteY="318dp" />
+
 </android.support.constraint.ConstraintLayout>
