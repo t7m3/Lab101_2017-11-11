@@ -10,8 +10,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import static android.R.attr.width;
+import static android.R.attr.x;
 import static com.example.njc_t1.lab101_2017_11_11.R.id.imageView;
-import static com.example.njc_t1.lab101_2017_11_11.R.id.imageView1;
 import static com.example.njc_t1.lab101_2017_11_11.R.id.textView;
 
 
@@ -29,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ImageView imageView100 = (ImageView) findViewById(R.id.imageView100);
-        imageView100.setY(600);
+        ImageView imagePlayer = (ImageView) findViewById(R.id.imagePlayer);
+        imagePlayer.setY(600);
 
         float x = 0;
         float y = 0;
@@ -55,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
         //インスタンスの生成
         game = new Game();
 
-        ImageView imageview1 = (ImageView)findViewById(imageView1);
-        imageview1.setY(100);
+        ImageView imageEnemy1 = (ImageView)findViewById(R.id.imageEnemy1);
+        imageEnemy1.setY(100);
 
         //タイマーのインスタンスの生成
         myCountDownTimer = new MyCountDownTimer(2*60*1000, 50);
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
             //game.enemy.Move();
             game.enemy1.Move(5);
+            game.bullet.Move(10);
         }
 
         public void onFinish(){
@@ -104,24 +106,26 @@ public class MainActivity extends AppCompatActivity {
     public boolean onTouchEvent(MotionEvent event) {
 
         //参照値の取得
-        ImageView imageView100 = (ImageView) findViewById(R.id.imageView100);
+        ImageView imagePlayer = (ImageView) findViewById(R.id.imagePlayer);
 
-        int x = (int) event.getX();                    //タッチしたＸ座標
-        int y = (int) event.getY();                //タッチしたＹ座標
+        int x = (int) event.getX();                //タッチした場所のＸ座標
+        int y = (int) event.getY();                //タッチした場所のＹ座標
 
         textView2.setText("X座標 "+x+"Y座標 " + y);
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 textView2.append("ACTION_DOWN");
-                //imageView100.setX(x);
+                //imagePlayer.setX(x);
                 break;
             case MotionEvent.ACTION_UP:
                 textView2.append("ACTION_UP");
+                game.bullet.set((int) imagePlayer.getX(), (int) imagePlayer.getY());
+                game.bullet.setShoot(true);
                 break;
             case MotionEvent.ACTION_MOVE:
                 textView2.append("ACTION_MOVE");
-                imageView100.setX(x);
+                imagePlayer.setX(x);
                 break;
             case MotionEvent.ACTION_CANCEL:
                 textView2.append("ACTION_CANCEL");
@@ -134,9 +138,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     public class  Enemy1 {
-        int dir = +1;
 
-        ImageView imageview1 = (ImageView)findViewById(imageView1);
+        private int dir = +1;
+
+        ImageView imageEnemy1 = (ImageView)findViewById(R.id.imageEnemy1);
 
         public  void  Move(int vlue){
 
@@ -144,22 +149,76 @@ public class MainActivity extends AppCompatActivity {
             int width = dm.widthPixels;
             //int height = dm.heightPixels
 
-            width = width - imageview1.getWidth();
+            width = width - imageEnemy1.getWidth();
 
-            float x = imageview1.getX();
+            float x = imageEnemy1.getX();
             x = x + dir * vlue;
-            imageview1.setX(x);
+            imageEnemy1.setX(x);
 
             if(x < 0 || x >= width)
                     dir = -dir;
         }
     }
 
+
+    public  class Bullet {
+
+        private int dir = +1;
+        private boolean shoot = false;
+
+        ImageView bullet = (ImageView)findViewById(R.id.imageBullet);
+
+        public Bullet() {
+
+            DisplayMetrics dm = Resources.getSystem().getDisplayMetrics();
+            int x = dm.widthPixels;
+            int y = dm.heightPixels;
+            x = x * 10/100;
+            y = y * 70/100;
+            bullet.setX(x);
+            bullet.setY(y);
+
+        }
+
+        public void setShoot(boolean s){
+            shoot = s;
+        }
+
+        public boolean getShoot(){
+            return shoot;
+        }
+
+        public void  set(int x, int y){
+            bullet.setX(x);
+            bullet.setY(y);
+        }
+
+        public  void  Move(int vlue){
+
+            DisplayMetrics dm = Resources.getSystem().getDisplayMetrics();
+            int height = dm.heightPixels;
+            //int height = dm.heightPixels
+
+            if(shoot == true) {
+                height = width - bullet.getHeight();
+
+                float y = bullet.getY();
+                y = y - dir * vlue;
+                bullet.setY(y);
+
+                if (x < 0 || x >= width)
+                    dir = -dir;
+            }
+        }
+
+    }
+
+
     public class Game{
 
         //インスタンスの生成
         Enemy1 enemy1 = new Enemy1();
-
+        Bullet bullet = new Bullet();
 
     }
 }
